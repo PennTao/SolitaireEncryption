@@ -9,10 +9,13 @@ namespace SolitaireEncryption
     class Deck
     {
         private LinkedList<Tuple<char,char>> cards;
+        private  Tuple<char, char> J0; 
+        private  Tuple<char, char> J1;
         public Deck(String deckfile)
         {
-
-          
+            cards = new LinkedList<Tuple<char, char>>();
+            J0 = new Tuple<char, char>('J', '0');
+            J1 = new Tuple<char, char>('J', '1');
             try
             {
                 StreamReader file = new StreamReader(deckfile);
@@ -29,11 +32,24 @@ namespace SolitaireEncryption
             }
             
         }
+        public int GetLoc(Tuple<char,char> node)
+        {
+            int idx = 0;
+            LinkedListNode<Tuple<char, char>> runner;
+            runner = cards.First;
+            while (runner.Value != node)
+            {
+                idx++;
+            }
+            if (idx >= 54)
+                return -1;
+            return idx;
+        }
+
         public int GenKeyStream()
         {
-            var J0 = new Tuple<char, char>('J', '0');
-            var J1 = new Tuple<char, char>('J', '1');
-            LinkedListNode<Tuple<char, char>> idxJ0, idxJ1,temp;
+            
+            LinkedListNode<Tuple<char, char>> idxJ0, idxJ1,temp,front,back;
             idxJ0 = cards.Find(J0);
             if (idxJ0.Next != null)
             {
@@ -46,6 +62,35 @@ namespace SolitaireEncryption
                 cards.Remove(idxJ0);
                 cards.AddAfter(cards.First, J0);
             }
+
+            idxJ1 = cards.Find(J1);
+            if (idxJ1.Next != null)
+            {
+                if (idxJ1.Next.Next != null)
+                {
+                    temp = idxJ1.Next.Next;
+                    cards.Remove(idxJ1);
+                    cards.AddAfter(temp, J1);
+                }
+                else
+                {
+                    cards.Remove(idxJ1);
+                    cards.AddAfter(cards.First, J1);
+                }
+            }
+            else 
+            {
+                cards.Remove(idxJ1);
+                cards.AddAfter(cards.First.Next, J1);
+            }
+
+            if (GetLoc(J0) < GetLoc(J1))
+            { 
+            }
+
+
+
+
             return 0;
         }
 
